@@ -1,0 +1,1 @@
+Library providing list functionality, notably as a read only array alternative.
