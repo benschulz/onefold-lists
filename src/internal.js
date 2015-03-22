@@ -33,6 +33,18 @@ define(['onefold-js'], function (js) {
             readOnly: function () {
                 return new ReadOnlyListView(this);
             },
+            reduce: function (accumulator, identity) {
+                var initialValueSpecified = arguments.length > 1;
+                var length = this.length;
+                if (!initialValueSpecified && length === 0)
+                    throw new TypeError('An empty list can not be reduced, specify an initial value.');
+
+                var aggregate = initialValueSpecified ? identity : this.get(0);
+                for (var i = initialValueSpecified ? 0 : 1; i < length; ++i)
+                    aggregate = accumulator(aggregate, this.get(i));
+
+                return aggregate;
+            },
             slice: function (start, end) {
                 var length = this.length;
                 start = arguments.length <= 0 ? 0 : start >= 0 ? start : length + start;
@@ -68,6 +80,7 @@ define(['onefold-js'], function (js) {
             'get': function (index) { return this.get(index); },
             'map': internal.map,
             'readOnly': internal.readOnly,
+            'reduce': internal.reduce,
             'slice': internal.slice,
             'toArray': internal.toArray,
             'tryFirstIndexOf': internal.tryFirstIndexOf
