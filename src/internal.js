@@ -101,6 +101,12 @@ define(['onefold-js'], function (js) {
         return js.objects.extend(internal, exported, extensions);
     }
 
+    /**
+     * @constructor
+     * @template E
+     *
+     * @param {Array<E>} array
+     */
     function ArrayList(array) {
         this.__array = array;
     }
@@ -113,6 +119,12 @@ define(['onefold-js'], function (js) {
         }
     });
 
+    /**
+     * @constructor
+     * @template E
+     *
+     * @param {onefold.lists.List<E>} list
+     */
     function ReadOnlyListView(list) {
         this.__list = list;
     }
