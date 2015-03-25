@@ -5,7 +5,7 @@ require(['require', 'chai'], function (require, chai) {
 
     window.expect = chai.expect;
 
-    require(['new-array-list/new-array-list'], function () {
+    require(['new-array-list/new-array-list.test'], function () {
         window.__karma__.start();
     });
 

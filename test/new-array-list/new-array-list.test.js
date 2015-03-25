@@ -1,6 +1,6 @@
 'use strict';
 
-define(['onefold-lists', './contains', './filter', './for-each'], function (lists) {
+define(['onefold-lists', './contains.test', './filter.test', './for-each.test'], function (lists) {
     var tests = arguments;
 
     describe('asList', function () {
