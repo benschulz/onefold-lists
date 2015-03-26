@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015, Ben Schulz
  * License: BSD 3-clause (http://opensource.org/licenses/BSD-3-Clause)
  */
@@ -11,12 +11,12 @@ onefold_lists_internal = function (js) {
       get length() {
         return this['length'];
       },
-      contains: function (element) {
-        return this.tryFirstIndexOf(element) >= 0;
+      contains: function (value) {
+        return this.tryFirstIndexOf(value) >= 0;
       },
       filter: function (predicate) {
-        var array = [];
-        for (var i = 0; i < this.length; ++i) {
+        var length = this.length, array = [];
+        for (var i = 0; i < length; ++i) {
           var element = this.get(i);
           if (predicate(element, i, this))
             array.push(element);
@@ -24,42 +24,53 @@ onefold_lists_internal = function (js) {
         return new ArrayList(array);
       },
       forEach: function (action) {
-        for (var i = 0, length = this.length; i < length; ++i)
+        var length = this.length;
+        for (var i = 0; i < length; ++i)
           action(this.get(i), i, this);
       },
       get: function (index) {
         return this['get'](index);
       },
       map: function (mapping) {
-        var array = new Array(this.length);
-        for (var i = 0; i < this.length; ++i)
+        var length = this.length, array = new Array(length);
+        for (var i = 0; i < length; ++i)
           array[i] = mapping(this.get(i), i, this);
         return new ArrayList(array);
       },
       readOnly: function () {
         return new ReadOnlyListView(this);
       },
-      slice: function (start, end) {
+      reduce: function (accumulator, identity) {
+        var initialValueSpecified = arguments.length > 1;
         var length = this.length;
-        start = arguments.length <= 0 ? 0 : start >= 0 ? start : length + start;
-        end = arguments.length <= 1 ? length : end >= 0 ? end : length + end;
-        var resultLength = end - start;
+        if (!initialValueSpecified && length === 0)
+          throw new TypeError('An empty list can not be reduced, specify an initial value.');
+        var aggregate = initialValueSpecified ? identity : this.get(0);
+        for (var i = initialValueSpecified ? 0 : 1; i < length; ++i)
+          aggregate = accumulator(aggregate, this.get(i));
+        return aggregate;
+      },
+      slice: function (beginIndex, endIndex) {
+        var length = this.length;
+        beginIndex = arguments.length <= 0 ? 0 : beginIndex >= 0 ? beginIndex : length + beginIndex;
+        endIndex = arguments.length <= 1 ? length : endIndex >= 0 ? endIndex : length + endIndex;
+        var resultLength = endIndex - beginIndex;
         var array = new Array(resultLength);
         for (var i = 0; i < resultLength; ++i) {
-          array[i] = this.get(start + i);
+          array[i] = this.get(beginIndex + i);
         }
         return new ArrayList(array);
       },
       toArray: function () {
-        var array = new Array(this.length);
-        this.forEach(function (element, index) {
-          array[index] = element;
-        });
+        var length = this.length, array = new Array(length);
+        for (var i = 0; i < length; ++i)
+          array[i] = this.get(i);
         return array;
       },
-      tryFirstIndexOf: function (element) {
-        for (var i = 0; i < this.length; ++i)
-          if (this.get(i) === element)
+      tryFirstIndexOf: function (value) {
+        var length = this.length;
+        for (var i = 0; i < length; ++i)
+          if (this.get(i) === value)
             return i;
         return -1;
       }
@@ -76,12 +87,19 @@ onefold_lists_internal = function (js) {
       },
       'map': internal.map,
       'readOnly': internal.readOnly,
+      'reduce': internal.reduce,
       'slice': internal.slice,
       'toArray': internal.toArray,
       'tryFirstIndexOf': internal.tryFirstIndexOf
     };
     return js.objects.extend(internal, exported, extensions);
   }
+  /**
+   * @constructor
+   * @template E
+   *
+   * @param {Array<E>} array
+   */
   function ArrayList(array) {
     this.__array = array;
   }
@@ -96,6 +114,12 @@ onefold_lists_internal = function (js) {
       return this.__array.slice();
     }
   });
+  /**
+   * @constructor
+   * @template E
+   *
+   * @param {onefold.lists.List<E>} list
+   */
   function ReadOnlyListView(list) {
     this.__list = list;
   }
