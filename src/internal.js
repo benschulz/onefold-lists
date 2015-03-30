@@ -123,7 +123,7 @@ define(['onefold-js'], function (js) {
      * @constructor
      * @template E
      *
-     * @param {onefold.lists.List<E>} list
+     * @param {de.benshu.onefold.lists.List<E>} list
      */
     function ReadOnlyListView(list) {
         this.__list = list;
