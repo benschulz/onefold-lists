@@ -1,6 +1,6 @@
 'use strict';
 
-define(['onefold-js', 'onefold-lists'], function (js, lists) {
+define(['onefold-lists'], function (lists) {
     function divisibleByTwo(e) { return e % 2 === 0; }
     
     return function () {
@@ -27,7 +27,7 @@ define(['onefold-js', 'onefold-lists'], function (js, lists) {
             it('The returned list should be independent from the source list.', function () {
                 var sourceBackingArray = ['foo'];
                 var source = lists.newArrayList(sourceBackingArray);
-                var filtered = source.filter(js.functions.true);
+                var filtered = source.filter(() => true);
 
                 sourceBackingArray.push('bar');
 
